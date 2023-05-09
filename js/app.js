@@ -10,6 +10,7 @@ class CalorieTracker {
     this._displayCaloriesConsumed();
     this._displayCaloriesBurned();
     this._displayCaloriesRemaining();
+    this._displayCaloriesProgress();
   }
 
   addMeal(meal) {
@@ -57,9 +58,36 @@ class CalorieTracker {
 
   _displayCaloriesRemaining() {
     const caloriesRemainingEl = document.getElementById('calories-remaining');
+    const progressEL = document.getElementById('calorie-progress');
 
     const remaining = this._calorieLimit - this._totalCalories;
     caloriesRemainingEl.innerHTML = remaining;
+
+    if (remaining <= 0) {
+      caloriesRemainingEl.parentElement.parentElement.classList.remove(
+        'bg-light'
+      );
+      caloriesRemainingEl.parentElement.parentElement.classList.add(
+        'bg-danger'
+      );
+      progressEL.classList.remove('bg-success');
+      progressEL.classList.add('bg-danger');
+    } else {
+      caloriesRemainingEl.parentElement.parentElement.classList.remove(
+        'bg-danger'
+      );
+      caloriesRemainingEl.parentElement.parentElement.classList.add('bg-light');
+      progressEL.classList.remove('bg-danger');
+      progressEL.classList.add('bg-success');
+    }
+  }
+
+  _displayCaloriesProgress() {
+    const progressEL = document.getElementById('calorie-progress');
+    const percentage = (this._totalCalories / this._calorieLimit) * 100;
+    const width = Math.min(percentage, 100);
+
+    progressEL.style.width = `${width}%`;
   }
 
   _render() {
@@ -67,6 +95,7 @@ class CalorieTracker {
     this._displayCaloriesConsumed();
     this._displayCaloriesBurned();
     this._displayCaloriesRemaining();
+    this._displayCaloriesProgress();
   }
 }
 
@@ -93,10 +122,8 @@ const lunch = new Meal('lunch', 350);
 tracker.addMeal(breakfast);
 tracker.addMeal(lunch);
 
-const run = new Workout('morning run', 300);
-const pushup = new Workout('push ups', 100);
+const run = new Workout('morning run', 320);
 tracker.addWorkout(run);
-tracker.addWorkout(pushup);
 
 console.log(tracker._meals);
 console.log(tracker._workouts);
